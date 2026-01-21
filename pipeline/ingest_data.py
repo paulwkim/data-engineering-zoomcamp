@@ -4,6 +4,7 @@
 import pandas as pd
 from sqlalchemy import create_engine
 from tqdm.auto import tqdm
+import click
 
 # column types
 dtype = {
@@ -29,8 +30,20 @@ parse_dates = [
     "tpep_dropoff_datetime"
 ]
 
-# 
-def run():
+# define command line interface
+@click.command()
+@click.option('--year', default=2021, type=int, help='Year of data to download')
+@click.option('--month', default=1, type=int, help='Month of data to download')
+@click.option('--pg-user', default='root', help='PostgreSQL user')
+@click.option('--pg-pw', default='root', help='PostgreSQL password')
+@click.option('--pg-host', default='localhost', help='PostgreSQL host')
+@click.option('--pg-port', default='5432', help='PostgreSQL port')
+@click.option('--pg-db', default='ny_taxi', help='PostgreSQL database name')
+@click.option('--chunksize', default=100000, type=int, help='Chunk size for reading CSV')
+@click.option('--target-table', default='yellow_taxi_data', help='Target table name')
+
+# upload data to db
+def run(year, month, pg_user, pg_pw, pg_host, pg_port, pg_db, chunksize, target_table):
     # set up url to download csv from
     year = 2021
     month = 1
