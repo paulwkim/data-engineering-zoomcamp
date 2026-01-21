@@ -45,21 +45,13 @@ parse_dates = [
 # upload data to db
 def run(year, month, pg_user, pg_pw, pg_host, pg_port, pg_db, chunksize, target_table):
     # set up url to download csv from
-    year = 2021
-    month = 1
     prefix_url = 'https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/'
     url = f'{prefix_url}yellow_tripdata_{year}-{month:02d}.csv.gz'
 
     # connect to sqlalchemy engine
-    pg_user = 'root'
-    pg_pw = 'root'
-    pg_host = 'localhost'
-    pg_port = '5432'
-    pg_db = 'ny_taxi'
     engine = create_engine(f'postgresql://{pg_user}:{pg_pw}@{pg_host}:{pg_port}/{pg_db}')
 
     # download data in chunks
-    chunksize = 100000
     df_iter = pd.read_csv(
         url,
         dtype=dtype,
@@ -69,7 +61,6 @@ def run(year, month, pg_user, pg_pw, pg_host, pg_port, pg_db, chunksize, target_
     )
 
     # process data into database
-    target_table = 'yellow_taxi_data'
     first = True
     for df_chunk in tqdm(df_iter):
         if first:
